@@ -161,10 +161,15 @@ write_action_env_to_bazelrc "TF_NEED_CUDA" ${TF_NEED_CUDA}
 
 # TODO(yifeif): do not hardcode path
 if [[ "$TF_NEED_CUDA" == "1" ]]; then
-  write_action_env_to_bazelrc "CUDNN_INSTALL_PATH" "/usr/lib/x86_64-linux-gnu"
   write_action_env_to_bazelrc "TF_CUDA_VERSION" "10.0"
   write_action_env_to_bazelrc "TF_CUDNN_VERSION" "7"
-  write_action_env_to_bazelrc "CUDA_TOOLKIT_PATH" "/usr/local/cuda"
+  if is_windows; then
+    write_action_env_to_bazelrc "CUDA_TOOLKIT_PATH" "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v10.0"
+    write_action_env_to_bazelrc "CUDNN_INSTALL_PATH" "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v10.0/include"
+  else
+    write_action_env_to_bazelrc "CUDA_TOOLKIT_PATH" "/usr/local/cuda"
+    write_action_env_to_bazelrc "CUDNN_INSTALL_PATH" "/usr/lib/x86_64-linux-gnu"
+  fi
   write_to_bazelrc "build --config=cuda"
   write_to_bazelrc "test --config=cuda"
 fi
